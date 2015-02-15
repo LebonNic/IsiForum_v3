@@ -1,0 +1,112 @@
+package isiforum.isima.fr.isiforum.controllers;
+
+import android.support.v7.app.ActionBarActivity;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import isiforum.isima.fr.isiforum.model.Post;
+import isiforum.isima.fr.isiforum.model.PostSingleton;
+import isiforum.isima.fr.isiforum.R;
+
+
+public class CreatePostActivity extends ActionBarActivity {
+
+    private static final String TAG = CreatePostActivity.class.getSimpleName();
+
+    EditText    etTitle,
+            etAuthor,
+            etMessage;
+
+    PostSingleton mSingleton;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_create_post);
+
+        this.etTitle = (EditText) findViewById(R.id.etTitleValue);
+        this.etAuthor = (EditText) findViewById(R.id.etAuthorNameValue);
+        this.etMessage = (EditText) findViewById(R.id.etMessageValue);
+        this.mSingleton = PostSingleton.getInstance();
+        bind();
+    }
+
+    private void bind(){
+        Button btnSend = (Button)findViewById(R.id.btnSend);
+        btnSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(validateUIFields()){
+                    Post postToSend = createPostToSend();
+                    CreatePostActivity.this.mSingleton.sendPost(postToSend);
+                    finish();
+                }
+                else {
+                    Toast.makeText(CreatePostActivity.this, "You need to complete all the fields " +
+                            "before to send a message.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_create_post, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private Post createPostToSend(){
+        String  title,
+                author,
+                message;
+
+        Post post;
+
+        title = this.etTitle.getText().toString();
+        author = this.etAuthor.getText().toString();
+        message = this.etMessage.getText().toString();
+        post = new Post(title, author, message);
+
+        return post;
+    }
+
+    private boolean validateUIFields(){
+        boolean valid = false;
+
+        if(!isEmpty(this.etTitle) && !isEmpty(this.etAuthor) && !isEmpty(this.etMessage)){
+            valid = true;
+        }
+
+        return valid;
+    }
+
+    private Boolean isEmpty(EditText editText){
+        boolean isEmpty = false;
+        if(editText.getText().toString().trim().length() == 0){
+            isEmpty = true;
+        }
+
+        return isEmpty;
+    }
+}
