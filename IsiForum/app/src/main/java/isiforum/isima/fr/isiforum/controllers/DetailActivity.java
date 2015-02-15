@@ -13,10 +13,13 @@ import isiforum.isima.fr.isiforum.model.Post;
 import isiforum.isima.fr.isiforum.model.PostSingleton;
 import isiforum.isima.fr.isiforum.R;
 
+/**
+ * Defines an activity which shows and handles the view to display a message.
+ */
 public class DetailActivity extends ActionBarActivity {
 
     private static final String TAG = DetailActivity.class.getSimpleName();
-    private int mId;
+    private int mIndex;
     private PostSingleton mSingleton;
 
 
@@ -26,11 +29,15 @@ public class DetailActivity extends ActionBarActivity {
         setContentView(R.layout.activity_detail);
 
         this.mSingleton = PostSingleton.getInstance();
-        this.mId = getIntent().getIntExtra("index", 0);
+        this.mIndex = getIntent().getIntExtra("index", 0);
         bind();
         display();
     }
 
+    /**
+     * This method is in charge of binding all the activity's objects together. It defines the
+     * handlers connected to the UI buttons for example.
+     */
     private void bind(){
         Button btnPrevious = (Button) findViewById(R.id.btnPrevious);
         Button btnNext = (Button) findViewById(R.id.btnNext);
@@ -60,8 +67,11 @@ public class DetailActivity extends ActionBarActivity {
 
     }
 
+    /**
+     * Displays the content of a message in the view.
+     */
     private void display() {
-        Post post = this.mSingleton.getPost(this.mId);
+        Post post = this.mSingleton.getPost(this.mIndex);
 
         TextView etAuthorName = (TextView) findViewById(R.id.tvAuthorNameValue);
         TextView etTitle = (TextView) findViewById(R.id.tvTitleValue);
@@ -72,14 +82,20 @@ public class DetailActivity extends ActionBarActivity {
         etMessage.setText(post.getMessage());
     }
 
+    /**
+     * Increments the post's index to display and call the display method.
+     */
     private void nextPost() {
-        this.mId = (this.mId + 1) % this.mSingleton.getPostCount();
+        this.mIndex = (this.mIndex + 1) % this.mSingleton.getPostCount();
         this.display();
     }
 
+    /**
+     * Decrements the post's index to display and call the display method.
+     */
     private void previousPost() {
         int count = this.mSingleton.getPostCount();
-        this.mId = (this.mId + count - 1) % count;
+        this.mIndex = (this.mIndex + count - 1) % count;
         display();
     }
 

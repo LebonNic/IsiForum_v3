@@ -13,7 +13,9 @@ import isiforum.isima.fr.isiforum.model.Post;
 import isiforum.isima.fr.isiforum.model.PostSingleton;
 import isiforum.isima.fr.isiforum.R;
 
-
+/**
+ * Defines an activity which is in charge of displaying and handling a view to send a post.
+ */
 public class CreatePostActivity extends ActionBarActivity {
 
     private static final String TAG = CreatePostActivity.class.getSimpleName();
@@ -36,6 +38,10 @@ public class CreatePostActivity extends ActionBarActivity {
         bind();
     }
 
+    /**
+     * This method is in charge of binding all the activity's objects together. It defines the
+     * handlers connected to the UI buttons for example.
+     */
     private void bind(){
         Button btnSend = (Button)findViewById(R.id.btnSend);
         btnSend.setOnClickListener(new View.OnClickListener() {
@@ -76,6 +82,10 @@ public class CreatePostActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Creates an initialized Post from the UI fields.
+     * @return An initialized Post.
+     */
     private Post createPostToSend(){
         String  title,
                 author,
@@ -91,6 +101,10 @@ public class CreatePostActivity extends ActionBarActivity {
         return post;
     }
 
+    /**
+     * Controls that all the UI text fields are filled with something.
+     * @return True if all the fields are filled, false if they are not.
+     */
     private boolean validateUIFields(){
         boolean valid = false;
 
@@ -101,6 +115,11 @@ public class CreatePostActivity extends ActionBarActivity {
         return valid;
     }
 
+    /**
+     * Checks that the EditText passed as parameter contains some text.
+     * @param editText The EditText passed as parameter.
+     * @return True if the EditText is empty, false if it is not.
+     */
     private Boolean isEmpty(EditText editText){
         boolean isEmpty = false;
         if(editText.getText().toString().trim().length() == 0){
