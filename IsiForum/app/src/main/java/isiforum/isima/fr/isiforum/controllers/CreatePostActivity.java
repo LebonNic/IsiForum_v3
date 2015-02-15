@@ -31,6 +31,7 @@ public class CreatePostActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_post);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         this.etTitle = (EditText) findViewById(R.id.etTitleValue);
         this.etAuthor = (EditText) findViewById(R.id.etAuthorNameValue);
         this.etMessage = (EditText) findViewById(R.id.etMessageValue);
@@ -74,9 +75,8 @@ public class CreatePostActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if(id == android.R.id.home){
+            finish();
         }
 
         return super.onOptionsItemSelected(item);
