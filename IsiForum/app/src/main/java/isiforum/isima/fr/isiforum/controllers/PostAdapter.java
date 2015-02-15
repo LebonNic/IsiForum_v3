@@ -12,6 +12,9 @@ import java.util.List;
 import isiforum.isima.fr.isiforum.R;
 import isiforum.isima.fr.isiforum.model.Post;
 
+/**
+ * An adapter to display custom views of the messages in the MainActivity's list view.
+ */
 public class PostAdapter extends ArrayAdapter<Post> {
 
 
