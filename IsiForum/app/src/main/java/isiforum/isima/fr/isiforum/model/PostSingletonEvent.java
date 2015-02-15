@@ -1,7 +1,46 @@
 package isiforum.isima.fr.isiforum.model;
 
 /**
- * Created by LebonNic on 15/02/2015.
+ * Defines an event class that can be sent by the PostSingleton to its observers
+ * (see Observer pattern).
  */
 public class PostSingletonEvent {
+
+    /**
+     * This enum defines the different types of events that can be sent by the
+     * PostSingleton.
+     */
+    public enum EventCode {
+        POSTS_LIST_UPDATED,
+        FAIL_TO_RETRIEVE_POSTS,
+        FAIL_TO_SEND_POST
+    }
+
+    /**
+     * A message to accompany the event.
+     */
+    private String mMessage;
+
+    /**
+     * The event's code.
+     */
+    private EventCode mCode;
+
+    public PostSingletonEvent(String message, EventCode code){
+        this.mMessage = message;
+        this.mCode = code;
+    }
+
+    public PostSingletonEvent(EventCode code){
+        this.mMessage = "";
+        this.mCode = code;
+    }
+
+    public String getMessage(){
+        return this.mMessage;
+    }
+
+    public EventCode getCode(){
+        return this.mCode;
+    }
 }
