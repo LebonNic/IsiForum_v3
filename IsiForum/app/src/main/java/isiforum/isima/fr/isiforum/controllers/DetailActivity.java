@@ -1,8 +1,11 @@
 package isiforum.isima.fr.isiforum.controllers;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -117,7 +120,37 @@ public class DetailActivity extends ActionBarActivity {
         if(id ==  android.R.id.home){
             finish();
         }
+        else if(id == R.id.action_delete){
+
+            // Opens a dialog box to make the user confirm the suppression
+            new AlertDialog.Builder(this)
+                    .setTitle("Delete post")
+                    .setMessage("Are you sure you want to delete this post ?")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            DetailActivity.this.deleteCurrentPost();
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * A simple method to launch the suppression of the current post (the one which is displayed).
+     */
+    private void deleteCurrentPost(){
+        Log.v(DetailActivity.TAG, "Deleting the post.");
+        this.mSingleton.deletePost(this.mSingleton.getPost(this.mIndex));
+        finish();
     }
 }

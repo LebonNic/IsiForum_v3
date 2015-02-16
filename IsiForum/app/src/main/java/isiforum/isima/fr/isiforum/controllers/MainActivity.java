@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
@@ -96,6 +97,7 @@ public class MainActivity extends ActionBarActivity implements Observer {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh){
+            Toast.makeText(MainActivity.this, "Refreshes the list of posts...", Toast.LENGTH_SHORT).show();
             PostSingleton.getInstance().updatePosts();
         }
 
@@ -127,16 +129,7 @@ public class MainActivity extends ActionBarActivity implements Observer {
     protected void onResume() {
         super.onResume();
         Log.v(MainActivity.TAG, "onResume called. Going to \"Resumed\" state.");
-
-        // This test is useful to not execute the update operation two times.
-        // When a new Post is created and sent to the web service, the PostSingleton notifies its
-        // observers by sending an event. This event is processed by the MainActivity in order to
-        // update the list view with the new post. So when the application goes back to the
-        // MainActivity from the CreatePostActivity, no need to call the update method a second time.
-        if(!this.isComingFromCreatePostActivity)
-            this.mSingleton.updatePosts();
-        else
-            this.isComingFromCreatePostActivity = false;
+        this.mSingleton.updatePosts();
     }
 
     @Override
@@ -173,12 +166,17 @@ public class MainActivity extends ActionBarActivity implements Observer {
                     break;
 
                 case FAIL_TO_RETRIEVE_POSTS:
-                    Log.v(MainActivity.TAG, "A problem occurred during the posts' fetching.");
+                    Log.v(MainActivity.TAG, "A problem occurred during the posts' retrieval.");
                     Toast.makeText(MainActivity.this, event.getMessage(), Toast.LENGTH_LONG).show();
                     break;
 
-                case FAIL_TO_SEND_POST:
-                    Log.v(MainActivity.TAG, "A problem occurred during the posts' sending.");
+                case FAIL_TO_SEND_POSTS:
+                    Log.v(MainActivity.TAG, "A problem occurred during the posts' retrieval.");
+                    Toast.makeText(MainActivity.this, event.getMessage(), Toast.LENGTH_SHORT).show();
+                    break;
+
+                case FAIL_TO_DELETE_POSTS:
+                    Log.v(MainActivity.TAG, "A problem occurred during the posts' deletion.");
                     Toast.makeText(MainActivity.this, event.getMessage(), Toast.LENGTH_SHORT).show();
                     break;
 

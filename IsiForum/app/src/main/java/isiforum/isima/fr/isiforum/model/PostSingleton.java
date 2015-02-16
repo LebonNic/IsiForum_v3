@@ -12,6 +12,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -73,8 +74,22 @@ public class PostSingleton extends Observable {
         new RetrievePosts().execute();
     }
 
+    /**
+     * The method launches an AsyncTask to contact a web service and to add a new message to its
+     * data source. All the sending logic is implemented in the AsyncTask.
+     * @param post The message to add in data source.
+     */
     public void sendPost(Post post) {
-        new SendPost().execute(post);
+        new SendPosts().execute(post);
+    }
+
+    /**
+     * The method launches an AsyncTask to delete a message of the data source (via the web service).
+     * All the deletion logic is implemented in the AsyncTask.
+     * @param post The message to delete.
+     */
+    public void deletePost(Post post){
+        new DeletePosts().execute(post);
     }
 
     /**
@@ -109,8 +124,6 @@ public class PostSingleton extends Observable {
         for(Post post:posts){
             this.posts.add(post);
         }
-        this.setChanged();
-        this.notifyObservers(new PostSingletonEvent(PostSingletonEvent.EventCode.POSTS_LIST_UPDATED));
     }
 
     /**
@@ -189,7 +202,7 @@ public class PostSingleton extends Observable {
     /**
      * Defines an AsyncTask to send a post to the web service (with a network access).
      */
-    class SendPost extends AsyncTask<Post, Integer, List<Post>> {
+    class SendPosts extends AsyncTask<Post, Integer, List<Post>> {
 
         @Override
         protected List<Post> doInBackground(Post... posts) {
@@ -261,7 +274,63 @@ public class PostSingleton extends Observable {
                 PostSingleton.getInstance().setChanged();
                 PostSingleton.getInstance().notifyObservers(new PostSingletonEvent("An error occured" +
                         " during sending the posts.",
-                        PostSingletonEvent.EventCode.FAIL_TO_SEND_POST));
+                        PostSingletonEvent.EventCode.FAIL_TO_SEND_POSTS));
+            }
+        }
+    }
+
+    /**
+     * Defines an AsyncTask to delete a post on the data source (with a network access).
+     */
+    class DeletePosts extends AsyncTask<Post, Integer, Boolean>{
+
+        @Override
+        protected Boolean doInBackground(Post... postsToDelete) {
+            Log.i(PostSingleton.TAG, "Deleting posts...");
+
+            Boolean deletionSucceed = true;
+            int count = postsToDelete.length;
+            HttpClient client = new DefaultHttpClient();
+
+            int i = 0;
+            while (i < count && deletionSucceed){
+                publishProgress((int) ((i / (float) count) * 100));
+
+                Post post = postsToDelete[i];
+                HttpDelete deleteRequest = new HttpDelete(PostSingleton.WEB_SERVICE_URL + "/" +
+                post.getId());
+
+                try {
+                    HttpResponse response = client.execute(deleteRequest);
+
+                    if(response.getStatusLine().getStatusCode() == HttpStatus.SC_NO_CONTENT){
+                        Log.i(PostSingleton.TAG, "Succeed to delete message \"" + post.getTitle()
+                        + "\".");
+                    }
+                    else {
+                        deletionSucceed = false;
+                        Log.e(PostSingleton.TAG, "Failled to delete message \"" + post.getTitle()
+                                +"\". The web service returned the following message: \""+
+                                response.getStatusLine().getReasonPhrase() + "\".");
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.e(PostSingleton.TAG, "Failed to delete message \"" + post.getTitle() + "\"" +
+                            " due to a connection error.");
+                }
+
+                i += 1;
+            }
+
+            return deletionSucceed;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean deletionSucceed){
+            if(!deletionSucceed){
+                PostSingleton.getInstance().notifyObservers(new PostSingletonEvent("An error" +
+                        "occurred during the posts' deletion. Please check your Internet connection" +
+                        " and retry.", PostSingletonEvent.EventCode.FAIL_TO_DELETE_POSTS));
             }
         }
     }

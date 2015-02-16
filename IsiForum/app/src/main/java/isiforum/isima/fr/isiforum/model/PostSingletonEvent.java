@@ -13,7 +13,8 @@ public class PostSingletonEvent {
     public enum EventCode {
         POSTS_LIST_UPDATED,
         FAIL_TO_RETRIEVE_POSTS,
-        FAIL_TO_SEND_POST
+        FAIL_TO_SEND_POSTS,
+        FAIL_TO_DELETE_POSTS
     }
 
     /**
