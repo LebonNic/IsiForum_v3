@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
@@ -35,7 +34,6 @@ public class MainActivity extends ActionBarActivity implements Observer {
     private PostSingleton mSingleton;
     private PostAdapter mAdapter;
     private ListView mListView;
-    private boolean isComingFromCreatePostActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +44,6 @@ public class MainActivity extends ActionBarActivity implements Observer {
         this.mSingleton = PostSingleton.getInstance();
         this.mAdapter = new PostAdapter(this, new ArrayList<Post>());
         this.mListView = (ListView) findViewById(R.id.lvPostsList);
-        this.isComingFromCreatePostActivity = false;
         bind();
     }
 
@@ -74,7 +71,6 @@ public class MainActivity extends ActionBarActivity implements Observer {
             @Override
             public void onClick(View v) {
                 Log.v(MainActivity.TAG, "Going to CreatePostActivity.");
-                MainActivity.this.isComingFromCreatePostActivity = true;
                 Intent intent = new Intent(MainActivity.this, CreatePostActivity.class);
                 startActivity(intent);
             }
